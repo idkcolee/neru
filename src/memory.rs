@@ -1,21 +1,27 @@
-const MEM_SIZE: usize = 0x0800; 
+const RAM_SIZE: usize = 0x2000;
 
 struct Memory {
-    data: [u8; MEM_SIZE]
+    ram: [u8; RAM_SIZE]
 }
 
 impl Memory {
     pub fn new() -> Memory {
         Memory {
-            data: [0x00; MEM_SIZE]
+            ram: [0x00; RAM_SIZE]
         }
     }
     
     pub fn read(&self, address: u16) -> u8 {
-        self.data[address as usize]
+        match address {
+            0x0000..=0x1FFF => self.ram[address],
+            _ => panic!("memory address out of range: {}", address)
+        }
     }
     
     pub fn write(&mut self, value: u8, address: u16) {
-        self.data[address as usize] = value;
+        match address {
+            0x0000..=0x1FFF => self.ram[address] = value,
+            _ => panic!("memory address out of range: {}", address)
+        }
     }
 }

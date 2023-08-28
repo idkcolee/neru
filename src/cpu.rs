@@ -1,5 +1,8 @@
+use std::ops::Add;
 use enumflags2::{bitflags, make_bitflags, BitFlags};
 use crate::cpu::Status::I;
+use crate::instruction::AddressingMode;
+use crate::memory::Memory;
 
 /// Used for the bitflags that represent the 6502's [flags register](https://www.nesdev.org/wiki/Status_flags) (P).
 /// It is composed of six one-bit registers but is architecturally byte-wide.
@@ -92,30 +95,27 @@ pub struct Cpu {
     x: u8,
     /// Index register Y
     y: u8,
-    /// Program counter
-    pc: u16,
     /// Stack pointer
     sp: u8,
+    /// Program counter
+    pc: u16,
     /// Status register
-    p: BitFlags<Status>
+    p: BitFlags<Status>,
+    /// Memory handler
+    memory: Memory
 }
 
 impl Cpu {
-    pub fn new() -> Cpu {
+    pub fn new() -> Self {
         Cpu {
             a: 0,
             x: 0,
             y: 0,
-            pc: 0,
             sp: 0,
-            p: make_bitflags!(Status::{})
+            pc: 0,
+            p: make_bitflags!(Status::{}),
+            memory: Memory::new()
         }
-    }
-
-    //
-    pub fn reset(&mut self) {
-        self.p.insert(I);
-
     }
 
     pub fn execute() {
@@ -124,5 +124,22 @@ impl Cpu {
         // 3. read 0-2 more bytes
         // 4. execute
         // 5. wait, count cycles, complete
+    }
+
+    fn get_operand_address(&mut self, addressing_mode: AddressingMode) -> u16 {
+        match addressing_mode {
+            AddressingMode::IMP => 0,
+            AddressingMode::IMM => self.pc,
+            AddressingMode::ZPG => self.memory.read(self.pc) as u16,
+            AddressingMode::ZPX => {},
+            AddressingMode::ZPY => {},
+            AddressingMode::REL => {},
+            AddressingMode::ABS => self.memory.read(self.pc),
+            AddressingMode::ABX => {},
+            AddressingMode::ABY => {},
+            AddressingMode::IND => {},
+            AddressingMode::IDX => {},
+            AddressingMode::IDY => {},
+        }
     }
 }

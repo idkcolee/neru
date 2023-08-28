@@ -1,6 +1,6 @@
 const RAM_SIZE: usize = 0x2000;
 
-struct Memory {
+pub struct Memory {
     ram: [u8; RAM_SIZE]
 }
 
@@ -10,7 +10,7 @@ impl Memory {
             ram: [0x00; RAM_SIZE]
         }
     }
-    
+
     pub fn read(&self, address: u16) -> u8 {
         match address {
             0x0000..=0x1FFF => self.ram[address],

@@ -1,10 +1,10 @@
 pub enum AddressingMode {
     IMP, IMM,
-    ZP0, ZPX,
+    ZPG, ZPX,
     ZPY, REL,
     ABS, ABX,
     ABY, IND,
-    IZX, IZY
+    IDX, IDY
 }
 
 pub enum Instruction {
@@ -18,7 +18,6 @@ pub enum Instruction {
     XXX
 }
 
-#[derive(Clone, Copy)]
 pub struct Opcode {
     instruction: Instruction,
     addressing_mode: AddressingMode,
